@@ -1,7 +1,12 @@
 <template>
+  <!-- <fullscreen ref="fullscreen" class="fullscreenClass" :wrap="true" @change="fullscreenChange"> -->
   <div id="app" class="app">
+
     <div class="app-bg-box" :style="'background-color:'+banner[curIndex].color[2]">
     </div>
+    <div class="qm-full-screen-a" @click="openBai">百度</div>
+    <!-- <a class="qm-full-screen-a" href="http://www.baidu.com" target="_top">百度</a> -->
+    <div class="qm-full-screen" id="full" @click="clickFullscreen">full</div>
     <el-container class="qm-page-banner"
       :style="bgOpcaty?'width:100%;left:0;transition: all 1s;background-image: url('+banner[curIndex].url+');height:660px;':'transition: all 1s; background-image: url('+banner[curIndex].url+');height:600px;'">
       <el-header
@@ -24,6 +29,7 @@
       </el-main>
     </el-container>
   </div>
+  <!-- </fullscreen> -->
 </template>
 
 <script>
@@ -34,6 +40,7 @@ import 'swiper/swiper.scss';
 import 'swiper/swiper-bundle.css'
 import QmHeader from './components/QmHeader.vue'
 import QmMain from './components/QmMian.vue'
+import screenfull from 'screenfull'
 export default {
   data () {
     return {
@@ -82,6 +89,7 @@ export default {
     QmMain
   },
   mounted () {
+
     document.getElementById('main').addEventListener('scroll', e => {
       if (e.target.scrollTop > 220) {
         this.bgOpcaty = true
@@ -89,6 +97,7 @@ export default {
         this.bgOpcaty = false
       }
     });
+    this.init()
   },
   methods: {
     switchAllSea () {
@@ -119,12 +128,61 @@ export default {
     },
     switchOneSea () {
       this.bannerSwiperSlide = false;
+    },
+
+    clickFullscreen () {
+      if (!screenfull.isEnabled) {
+        this.$message({
+          message: 'you browser can not work',
+          type: 'warning'
+        })
+        return false
+      }
+      screenfull.toggle()
+    },
+    init () {
+      if (screenfull.enabled) {
+        screenfull.on('change', this.change)
+      }
+    },
+
+    openBai () {
+      var windowObjectReference;
+      var strWindowFeatures = "menubar=yes,location=yes,resizable=yes,scrollbars=true,status=true";
+      windowObjectReference = window.open("https://www.baidu.com/", "B_page", strWindowFeatures);
+      setTimeout(function () {
+        //windowObjectReference.close(); // 我们页面中关闭 或进行其他操作 打开的 窗口页
+        console.log(windowObjectReference.position); // 10s 后 在origin winodw 控制台 打印 B_page 视口对象中的position 成员
+      }, 10000);
     }
   }
 }
 </script>
 
 <style scoped>
+.qm-full-screen {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 6px 10px;
+  z-index: 100;
+  cursor: pointer;
+}
+.qm-full-screen-a {
+  position: fixed;
+  top: 10px;
+  right: 100px;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 6px 10px;
+  z-index: 100;
+  cursor: pointer;
+}
+.qm-full-screen:hover {
+  color: #fff;
+}
 .app-bg-box {
   width: 100%;
   height: 100%;
